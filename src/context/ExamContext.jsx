@@ -1,71 +1,47 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { loadExams } from '../utils/csvParser';
-
-const STORAGE_KEY = 'exam-dashboard-selected-courses';
+import { createContext, useContext, useState, useCallback } from 'react';
+import { loadExamsFromStorage, saveExamsToStorage, createExam } from '../utils/examHelpers';
 
 const ExamContext = createContext(null);
 
 export function ExamProvider({ children }) {
-  const [allExams, setAllExams] = useState([]);
-  const [selectedCourses, setSelectedCourses] = useState(() => {
-    try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [exams, setExams] = useState(() => loadExamsFromStorage());
 
-  // Load CSV on mount
-  useEffect(() => {
-    loadExams()
-      .then((exams) => {
-        setAllExams(exams);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error('Failed to load exams:', err);
-        setError('Sınav verileri yüklenemedi.');
-        setLoading(false);
-      });
+  const persist = useCallback((updatedExams) => {
+    const sorted = [...updatedExams].sort((a, b) => a.date - b.date);
+    setExams(sorted);
+    saveExamsToStorage(sorted);
   }, []);
 
-  // Persist selections
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(selectedCourses));
-  }, [selectedCourses]);
+  const addExam = useCallback((formData) => {
+    const newExam = createExam(formData);
+    persist([...exams, newExam]);
+    return newExam;
+  }, [exams, persist]);
 
-  const toggleCourse = useCallback((courseName) => {
-    setSelectedCourses((prev) =>
-      prev.includes(courseName)
-        ? prev.filter((c) => c !== courseName)
-        : [...prev, courseName]
-    );
-  }, []);
+  const updateExam = useCallback((id, formData) => {
+    const updated = exams.map((e) => {
+      if (e.id !== id) return e;
+      return createExam({ ...formData, id });
+    });
+    // Preserve original id
+    const idx = updated.findIndex((e) => e.id !== id && exams.find((x) => x.id === id));
+    const finalExams = exams.map((e) => {
+      if (e.id !== id) return e;
+      const rebuilt = createExam(formData);
+      return { ...rebuilt, id };
+    });
+    persist(finalExams);
+  }, [exams, persist]);
 
-  const selectAll = useCallback(() => {
-    setSelectedCourses(allExams.map((e) => e.course));
-  }, [allExams]);
-
-  const deselectAll = useCallback(() => {
-    setSelectedCourses([]);
-  }, []);
-
-  const selectedExams = allExams
-    .filter((exam) => selectedCourses.includes(exam.course))
-    .sort((a, b) => a.date - b.date);
+  const deleteExam = useCallback((id) => {
+    persist(exams.filter((e) => e.id !== id));
+  }, [exams, persist]);
 
   const value = {
-    allExams,
-    selectedCourses,
-    selectedExams,
-    toggleCourse,
-    selectAll,
-    deselectAll,
-    loading,
-    error,
+    exams,
+    addExam,
+    updateExam,
+    deleteExam,
   };
 
   return <ExamContext.Provider value={value}>{children}</ExamContext.Provider>;
