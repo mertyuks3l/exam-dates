@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, AlertTriangle, Settings } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, AlertTriangle, Settings, Plus } from 'lucide-react';
 import { useExams } from '../context/ExamContext';
-import { daysFromNow, getExamStatus } from '../utils/csvParser';
+import { daysFromNow, getExamStatus } from '../utils/examHelpers';
 import ExamCard from './ExamCard';
 import CalendarView from './Calendar';
 
 export default function Dashboard({ onNavigateSettings }) {
-  const { selectedExams, selectedCourses } = useExams();
+  const { exams } = useExams();
   const [now, setNow] = useState(new Date());
 
   // Update every second for live countdown
@@ -16,9 +16,9 @@ export default function Dashboard({ onNavigateSettings }) {
   }, []);
 
   // Filter exams
-  const upcomingExams = selectedExams.filter((e) => daysFromNow(e.date) >= 0);
-  const todayExams = selectedExams.filter((e) => daysFromNow(e.date) === 0);
-  const futureExams = selectedExams.filter((e) => daysFromNow(e.date) > 0);
+  const upcomingExams = exams.filter((e) => daysFromNow(e.date) >= 0);
+  const todayExams = exams.filter((e) => daysFromNow(e.date) === 0);
+  const futureExams = exams.filter((e) => daysFromNow(e.date) > 0);
   const nextExam = futureExams.length > 0 ? futureExams[0] : (todayExams.length > 0 ? todayExams[0] : null);
 
   // Countdown calculation for next exam (counts down to exam start time)
@@ -37,7 +37,7 @@ export default function Dashboard({ onNavigateSettings }) {
     return { days, hours, minutes, seconds };
   }
 
-  if (selectedCourses.length === 0) {
+  if (exams.length === 0) {
     return (
       <div className="main-content">
         <div className="page-header">
@@ -46,11 +46,11 @@ export default function Dashboard({ onNavigateSettings }) {
         </div>
         <div className="empty-state">
           <AlertTriangle />
-          <h3>Henüz ders seçilmedi</h3>
-          <p>Sınavlarınızı takip etmek için önce Ayarlar sayfasından derslerinizi seçin.</p>
+          <h3>Henüz sınav eklenmedi</h3>
+          <p>Sınavlarınızı takip etmek için Ayarlar sayfasından sınavlarınızı ekleyin.</p>
           <button className="go-settings-btn" onClick={onNavigateSettings}>
-            <Settings size={16} />
-            Ders Seçimine Git
+            <Plus size={16} />
+            Sınav Ekle
           </button>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Dashboard({ onNavigateSettings }) {
     <div className="main-content">
       <div className="page-header">
         <h1>Dashboard</h1>
-        <p>{selectedCourses.length} ders takip ediliyor · {upcomingExams.length} yaklaşan sınav</p>
+        <p>{exams.length} sınav kayıtlı · {upcomingExams.length} yaklaşan sınav</p>
       </div>
 
       {/* Next Exam Hero Card */}
@@ -163,7 +163,7 @@ export default function Dashboard({ onNavigateSettings }) {
         <div className="empty-state">
           <Calendar />
           <h3>Tüm sınavlar tamamlandı! 🎉</h3>
-          <p>Seçili derslerinizin tüm sınavları geçmiş görünüyor.</p>
+          <p>Tüm sınavlarınız geçmiş görünüyor.</p>
         </div>
       )}
     </div>
