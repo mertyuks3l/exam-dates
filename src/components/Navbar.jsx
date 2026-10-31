@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings, GraduationCap } from 'lucide-react';
+import { CalendarDays, SlidersHorizontal } from 'lucide-react';
 
 export default function Navbar({ activeView, onChangeView }) {
   return (
@@ -6,9 +6,12 @@ export default function Navbar({ activeView, onChangeView }) {
       <div className="navbar-inner">
         <div className="navbar-brand">
           <div className="brand-icon">
-            <GraduationCap size={18} />
+            <CalendarDays size={17} />
           </div>
-          <span>Exam Dashboard</span>
+          <div className="brand-text">
+            <span className="brand-title">Sınav Takvimi</span>
+            <span className="brand-term">2026–27 Güz</span>
+          </div>
         </div>
 
         <div className="navbar-tabs">
@@ -16,15 +19,15 @@ export default function Navbar({ activeView, onChangeView }) {
             className={`nav-tab ${activeView === 'dashboard' ? 'active' : ''}`}
             onClick={() => onChangeView('dashboard')}
           >
-            <LayoutDashboard size={16} />
-            Dashboard
+            <CalendarDays size={15} />
+            Takvim
           </button>
           <button
             className={`nav-tab ${activeView === 'settings' ? 'active' : ''}`}
             onClick={() => onChangeView('settings')}
           >
-            <Settings size={16} />
-            Ayarlar
+            <SlidersHorizontal size={15} />
+            Ders Seçimi
           </button>
         </div>
       </div>

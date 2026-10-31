@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, AlertTriangle, Settings, Tag } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, AlertCircle, Settings, CheckCircle2 } from 'lucide-react';
 import { useExams } from '../context/ExamContext';
-import { daysFromNow, getExamStatus } from '../utils/examHelpers';
+import { daysFromNow } from '../utils/examHelpers';
 import ExamCard from './ExamCard';
 import CalendarView from './Calendar';
 
@@ -10,6 +10,12 @@ const PERIOD_TITLES = {
   Vize: 'Yaklaşan Vize Sınavları',
   Final: 'Yaklaşan Final Sınavları',
   Bütünleme: 'Yaklaşan Bütünleme Sınavları',
+};
+
+const PERIOD_CLASS = {
+  Vize: 'period-vize',
+  Final: 'period-final',
+  Bütünleme: 'period-butunleme',
 };
 
 export default function Dashboard({ onNavigateSettings }) {
@@ -55,13 +61,13 @@ export default function Dashboard({ onNavigateSettings }) {
     return (
       <div className="main-content">
         <div className="page-header">
-          <h1>Dashboard</h1>
+          <h1>Genel Bakış</h1>
           <p>Sınav takviminizin genel görünümü</p>
         </div>
         <div className="empty-state">
-          <AlertTriangle />
+          <Calendar />
           <h3>Henüz ders seçilmedi</h3>
-          <p>Sınavlarınızı takip etmek için önce Ayarlar sayfasından derslerinizi seçin.</p>
+          <p>Sınavlarınızı takip etmek için önce Ayarlar sayfasından kayıtlı olduğunuz dersleri seçin.</p>
           <button className="go-settings-btn" onClick={onNavigateSettings}>
             <Settings size={16} />
             Ders Seçimine Git
@@ -74,63 +80,75 @@ export default function Dashboard({ onNavigateSettings }) {
   return (
     <div className="main-content">
       <div className="page-header">
-        <h1>Dashboard</h1>
+        <h1>Genel Bakış</h1>
         <p>{selectedCourses.length} ders takip ediliyor · {upcomingExams.length} yaklaşan sınav</p>
       </div>
 
       {/* Next Exam Hero Card */}
       {nextExam && (
         <div className="hero-card">
-          <div className="hero-label">
-            <span className="pulse-dot"></span>
-            {daysFromNow(nextExam.date) === 0 ? 'Bugünkü Sınav' : 'Sıradaki Sınav'}
-          </div>
-          <div className="hero-course">{nextExam.course}</div>
-          <div className="hero-meta">
-            <span className="hero-meta-item">
-              <Tag size={15} /> {nextExam.period}
-            </span>
-            <span className="hero-meta-item">
-              <Calendar size={15} /> {nextExam.dateStr}
-            </span>
-            <span className="hero-meta-item">
-              <Clock size={15} /> {nextExam.timeStr}
-            </span>
-            {nextExam.classroom && (
-              <span className="hero-meta-item">
-                <MapPin size={15} /> {nextExam.classroom}
-              </span>
-            )}
-            {nextExam.lecturer && (
-              <span className="hero-meta-item">
-                <User size={15} /> {nextExam.lecturer}
-              </span>
-            )}
-          </div>
-          {daysFromNow(nextExam.date) >= 0 && (() => {
-            const cd = getCountdown(nextExam);
-            const isUrgent = cd.days <= 1;
-            return (
-              <div className={`hero-countdown ${isUrgent ? 'urgent' : ''}`}>
-                <div className="countdown-unit">
-                  <div className="countdown-value">{cd.days}</div>
-                  <div className="countdown-label">Gün</div>
-                </div>
-                <div className="countdown-unit">
-                  <div className="countdown-value">{String(cd.hours).padStart(2, '0')}</div>
-                  <div className="countdown-label">Saat</div>
-                </div>
-                <div className="countdown-unit">
-                  <div className="countdown-value">{String(cd.minutes).padStart(2, '0')}</div>
-                  <div className="countdown-label">Dakika</div>
-                </div>
-                <div className="countdown-unit countdown-seconds">
-                  <div className="countdown-value">{String(cd.seconds).padStart(2, '0')}</div>
-                  <div className="countdown-label">Saniye</div>
-                </div>
+          <div className="hero-top">
+            <div className="hero-main">
+              <div className="hero-badges">
+                <span className="hero-label">
+                  <span className="pulse-dot"></span>
+                  {daysFromNow(nextExam.date) === 0 ? 'Bugünkü Sınav' : 'Sıradaki Sınav'}
+                </span>
+                {nextExam.code && <span className="course-code-tag">{nextExam.code}</span>}
+                {nextExam.period && (
+                  <span className={`period-tag ${PERIOD_CLASS[nextExam.period] || ''}`}>
+                    {nextExam.period}
+                  </span>
+                )}
               </div>
-            );
-          })()}
+              <div className="hero-course">{nextExam.name || nextExam.course}</div>
+              <div className="hero-meta">
+                <span className="hero-meta-item">
+                  <Calendar size={15} /> {nextExam.dateStr}
+                </span>
+                {nextExam.timeStr && (
+                  <span className="hero-meta-item">
+                    <Clock size={15} /> {nextExam.timeStr}
+                  </span>
+                )}
+                {nextExam.classroom && (
+                  <span className="hero-meta-item">
+                    <MapPin size={15} /> {nextExam.classroom}
+                  </span>
+                )}
+                {nextExam.lecturer && (
+                  <span className="hero-meta-item">
+                    <User size={15} /> {nextExam.lecturer}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {daysFromNow(nextExam.date) >= 0 && (() => {
+              const cd = getCountdown(nextExam);
+              const isUrgent = cd.days <= 1;
+              return (
+                <div className={`hero-countdown ${isUrgent ? 'urgent' : ''}`}>
+                  <div className="countdown-unit">
+                    <div className="countdown-value">{cd.days}</div>
+                    <div className="countdown-label">Gün</div>
+                  </div>
+                  <div className="countdown-unit">
+                    <div className="countdown-value">{String(cd.hours).padStart(2, '0')}</div>
+                    <div className="countdown-label">Saat</div>
+                  </div>
+                  <div className="countdown-unit">
+                    <div className="countdown-value">{String(cd.minutes).padStart(2, '0')}</div>
+                    <div className="countdown-label">Dakika</div>
+                  </div>
+                  <div className="countdown-unit countdown-seconds">
+                    <div className="countdown-value">{String(cd.seconds).padStart(2, '0')}</div>
+                    <div className="countdown-label">Saniye</div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
         </div>
       )}
 
@@ -139,16 +157,16 @@ export default function Dashboard({ onNavigateSettings }) {
         <div className="today-section">
           <div className="today-banner">
             <div className="today-icon">
-              <AlertTriangle size={20} />
+              <AlertCircle size={20} />
             </div>
             <div className="today-banner-text">
-              <h3>Bugün {todayExams.length} sınavınız var!</h3>
-              <p>Hazırlıklarınızı tamamladığınızdan emin olun. Başarılar! 🍀</p>
+              <h3>Bugün {todayExams.length} sınavınız var</h3>
+              <p>Sınav saatlerinizi ve derslik bilgilerinizi kontrol etmeyi unutmayın.</p>
             </div>
           </div>
           <div className="exam-grid">
             {todayExams.map((exam, i) => (
-              <ExamCard key={exam.id} exam={exam} style={{ animationDelay: `${i * 0.08}s` }} />
+              <ExamCard key={exam.id} exam={exam} style={{ animationDelay: `${i * 0.05}s` }} />
             ))}
           </div>
         </div>
@@ -159,17 +177,17 @@ export default function Dashboard({ onNavigateSettings }) {
 
       {/* Upcoming Exams Separated by Period */}
       {futureExamsByPeriod.map((group) => (
-        <div key={group.period} style={{ marginBottom: 'var(--space-2xl)' }}>
+        <div key={group.period} className="period-section">
           <div className="section-header">
             <h2 className="section-title">
-              <Calendar size={18} />
+              <span className={`period-dot ${PERIOD_CLASS[group.period] || ''}`}></span>
               {group.title}
             </h2>
-            <span className="section-count">{group.exams.length}</span>
+            <span className="section-count">{group.exams.length} sınav</span>
           </div>
           <div className="exam-grid">
             {group.exams.map((exam, i) => (
-              <ExamCard key={exam.id} exam={exam} style={{ animationDelay: `${i * 0.06}s` }} />
+              <ExamCard key={exam.id} exam={exam} style={{ animationDelay: `${i * 0.04}s` }} />
             ))}
           </div>
         </div>
@@ -178,9 +196,9 @@ export default function Dashboard({ onNavigateSettings }) {
       {/* All selected exams passed */}
       {upcomingExams.length === 0 && (
         <div className="empty-state">
-          <Calendar />
-          <h3>Tüm sınavlar tamamlandı! 🎉</h3>
-          <p>Seçili derslerinizin tüm sınavları geçmiş görünüyor.</p>
+          <CheckCircle2 />
+          <h3>Tüm sınavlar tamamlandı</h3>
+          <p>Seçili derslerinizin bu dönemki tüm sınavları tamamlanmış görünüyor.</p>
         </div>
       )}
     </div>

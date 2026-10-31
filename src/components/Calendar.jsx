@@ -9,6 +9,12 @@ const TURKISH_MONTHS = [
 
 const TURKISH_DAYS_SHORT = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 
+const PERIOD_CLASS = {
+  Vize: 'period-vize',
+  Final: 'period-final',
+  Bütünleme: 'period-butunleme',
+};
+
 function dateKey(d) {
   return `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 }
@@ -62,17 +68,20 @@ export default function Calendar() {
   return (
     <div className="weekly-calendar">
       <div className="weekly-nav">
-        <button className="calendar-nav" onClick={prevWeek} aria-label="Önceki hafta">
-          <ChevronLeft size={18} />
-        </button>
-        <div className="weekly-nav-center">
+        <div className="weekly-nav-left">
           <h3 className="weekly-range">{rangeLabel}</h3>
-          <button className="weekly-today-btn" onClick={goToday}>Bugün</button>
         </div>
-        <button className="calendar-nav" onClick={nextWeek} aria-label="Sonraki hafta">
-          <ChevronRight size={18} />
-        </button>
+        <div className="weekly-nav-controls">
+          <button className="calendar-nav" onClick={prevWeek} aria-label="Önceki hafta">
+            <ChevronLeft size={16} />
+          </button>
+          <button className="weekly-today-btn" onClick={goToday}>Bugün</button>
+          <button className="calendar-nav" onClick={nextWeek} aria-label="Sonraki hafta">
+            <ChevronRight size={16} />
+          </button>
+        </div>
       </div>
+
       <div className="weekly-grid">
         {weekDays.map((date, i) => {
           const key = dateKey(date);
@@ -80,18 +89,43 @@ export default function Calendar() {
           const dayExams = examsByDate[key] || [];
           const isPast = date < today;
           return (
-            <div key={key} className={['weekly-day', isToday && 'today', isPast && 'past', dayExams.length > 0 && 'has-exams'].filter(Boolean).join(' ')}>
+            <div
+              key={key}
+              className={[
+                'weekly-day',
+                isToday && 'today',
+                isPast && 'past',
+                dayExams.length > 0 && 'has-exams',
+              ].filter(Boolean).join(' ')}
+            >
               <div className="weekly-day-header">
                 <span className="weekly-day-name">{TURKISH_DAYS_SHORT[i]}</span>
-                <span className={`weekly-day-num ${isToday ? 'today-num' : ''}`}>{date.getDate()}</span>
+                <span className={`weekly-day-num ${isToday ? 'today-num' : ''}`}>
+                  {date.getDate()}
+                </span>
               </div>
               <div className="weekly-day-exams">
                 {dayExams.length === 0 && <div className="weekly-no-exam">—</div>}
                 {dayExams.map((exam) => (
-                  <div key={exam.id} className="weekly-exam-item selected">
-                    <div className="weekly-exam-name">{exam.course}{exam.period ? ` · ${exam.period}` : ''}</div>
-                    {exam.timeStr && <div className="weekly-exam-meta"><Clock size={11} /><span>{exam.timeStr}</span></div>}
-                    {exam.classroom && <div className="weekly-exam-meta"><MapPin size={11} /><span>{exam.classroom}</span></div>}
+                  <div
+                    key={exam.id}
+                    className={`weekly-exam-item selected ${PERIOD_CLASS[exam.period] || ''}`}
+                  >
+                    <div className="weekly-exam-name">
+                      {exam.code ? `${exam.code} · ${exam.name}` : exam.course}
+                    </div>
+                    {exam.timeStr && (
+                      <div className="weekly-exam-meta">
+                        <Clock size={11} />
+                        <span>{exam.timeStr}</span>
+                      </div>
+                    )}
+                    {exam.classroom && (
+                      <div className="weekly-exam-meta">
+                        <MapPin size={11} />
+                        <span>{exam.classroom}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>

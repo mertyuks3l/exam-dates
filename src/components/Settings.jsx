@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Search } from 'lucide-react';
+import { Search, User } from 'lucide-react';
 import { useExams } from '../context/ExamContext';
 
 const GROUP_LABELS = {
@@ -12,6 +12,12 @@ const GROUP_LABELS = {
 
 const GROUP_ORDER = ['Ortak', '1', '2', '3', '4'];
 
+const PERIOD_CLASS = {
+  Vize: 'period-vize',
+  Final: 'period-final',
+  Bütünleme: 'period-butunleme',
+};
+
 export default function SettingsView() {
   const { allExams, selectedCourses, toggleCourse, selectAll, deselectAll } = useExams();
   const [search, setSearch] = useState('');
@@ -21,7 +27,14 @@ export default function SettingsView() {
     const map = new Map();
     for (const exam of allExams) {
       if (!map.has(exam.course)) {
-        map.set(exam.course, { course: exam.course, group: exam.group, lecturer: exam.lecturer, exams: [] });
+        map.set(exam.course, {
+          course: exam.course,
+          code: exam.code,
+          name: exam.name,
+          group: exam.group,
+          lecturer: exam.lecturer,
+          exams: [],
+        });
       }
       const entry = map.get(exam.course);
       if (!entry.lecturer && exam.lecturer) entry.lecturer = exam.lecturer;
@@ -31,9 +44,10 @@ export default function SettingsView() {
   }, [allExams]);
 
   const query = search.toLowerCase();
-  const filtered = courses.filter((c) =>
-    c.course.toLowerCase().includes(query) ||
-    c.lecturer.toLowerCase().includes(query)
+  const filtered = courses.filter(
+    (c) =>
+      c.course.toLowerCase().includes(query) ||
+      c.lecturer.toLowerCase().includes(query)
   );
 
   const groups = GROUP_ORDER
@@ -44,33 +58,37 @@ export default function SettingsView() {
     <div className="main-content">
       <div className="page-header">
         <h1>Ders Seçimi</h1>
-        <p>Kayıtlı olduğunuz dersleri seçin. Vize, final ve bütünleme sınavları otomatik olarak eklenir.</p>
+        <p>Kayıtlı olduğunuz dersleri seçin. Vize, final ve bütünleme sınavları otomatik olarak takviminize eklenir.</p>
       </div>
 
-      <div className="settings-search">
-        <Search />
-        <input
-          type="text"
-          placeholder="Ders veya öğretim üyesi ara..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          id="course-search"
-        />
-      </div>
+      <div className="settings-toolbar">
+        <div className="settings-search">
+          <Search />
+          <input
+            type="text"
+            placeholder="Ders kodu, ders adı veya öğretim üyesi ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            id="course-search"
+          />
+        </div>
 
-      <div className="select-bar">
-        <span>{selectedCourses.length} / {courses.length} ders seçildi</span>
-        <div>
-          <button onClick={selectAll}>Tümünü Seç</button>
-          <button onClick={deselectAll}>Temizle</button>
+        <div className="select-bar">
+          <span>
+            <strong>{selectedCourses.length}</strong> / {courses.length} ders seçili
+          </span>
+          <div className="select-actions">
+            <button onClick={selectAll}>Tümünü Seç</button>
+            <button onClick={deselectAll}>Temizle</button>
+          </div>
         </div>
       </div>
 
       {groups.map(({ group, items }) => (
-        <div key={group}>
+        <div key={group} className="course-group-section">
           <div className="section-header">
             <h2 className="section-title">{GROUP_LABELS[group] || group}</h2>
-            <span className="section-count">{items.length}</span>
+            <span className="section-count">{items.length} ders</span>
           </div>
           <div className="course-list">
             {items.map((c, i) => {
@@ -80,17 +98,27 @@ export default function SettingsView() {
                   key={c.course}
                   className={`course-item ${isSelected ? 'selected' : ''}`}
                   onClick={() => toggleCourse(c.course)}
-                  style={{ animationDelay: `${i * 0.03}s` }}
+                  style={{ animationDelay: `${i * 0.02}s` }}
                 >
                   <div className="course-info">
-                    <div className="course-name">{c.course}</div>
+                    <div className="course-title-row">
+                      {c.code && <span className="course-code-tag">{c.code}</span>}
+                      <span className="course-name">{c.name || c.course}</span>
+                      {c.lecturer && (
+                        <span className="course-lecturer">
+                          <User size={12} /> {c.lecturer}
+                        </span>
+                      )}
+                    </div>
                     <div className="course-meta">
                       {c.exams.map((e) => (
-                        <span key={e.id} className="meta-chip">
-                          <strong>{e.period}:</strong> {e.dateStr} {e.timeStr}
+                        <span
+                          key={e.id}
+                          className={`meta-chip ${PERIOD_CLASS[e.period] || ''}`}
+                        >
+                          <strong>{e.period}</strong> {e.dateStr.split(' ')[0]} · {e.timeStr}
                         </span>
                       ))}
-                      {c.lecturer && <span className="meta-chip">{c.lecturer}</span>}
                     </div>
                   </div>
                   <label className="toggle-switch" onClick={(e) => e.stopPropagation()}>
@@ -112,7 +140,7 @@ export default function SettingsView() {
         <div className="empty-state">
           <Search />
           <h3>Sonuç bulunamadı</h3>
-          <p>Arama kriterlerinize uygun ders yok.</p>
+          <p>Arama kriterlerinize uygun ders bulunamadı.</p>
         </div>
       )}
     </div>
