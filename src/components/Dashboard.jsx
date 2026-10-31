@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, AlertTriangle, Settings, Plus } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, AlertTriangle, Settings, Tag } from 'lucide-react';
 import { useExams } from '../context/ExamContext';
 import { daysFromNow, getExamStatus } from '../utils/examHelpers';
 import ExamCard from './ExamCard';
 import CalendarView from './Calendar';
 
 export default function Dashboard({ onNavigateSettings }) {
-  const { exams } = useExams();
+  const { exams, selectedCourses } = useExams();
   const [now, setNow] = useState(new Date());
 
   // Update every second for live countdown
@@ -37,7 +37,7 @@ export default function Dashboard({ onNavigateSettings }) {
     return { days, hours, minutes, seconds };
   }
 
-  if (exams.length === 0) {
+  if (selectedCourses.length === 0) {
     return (
       <div className="main-content">
         <div className="page-header">
@@ -46,11 +46,11 @@ export default function Dashboard({ onNavigateSettings }) {
         </div>
         <div className="empty-state">
           <AlertTriangle />
-          <h3>Henüz sınav eklenmedi</h3>
-          <p>Sınavlarınızı takip etmek için Ayarlar sayfasından sınavlarınızı ekleyin.</p>
+          <h3>Henüz ders seçilmedi</h3>
+          <p>Sınavlarınızı takip etmek için önce Ayarlar sayfasından derslerinizi seçin.</p>
           <button className="go-settings-btn" onClick={onNavigateSettings}>
-            <Plus size={16} />
-            Sınav Ekle
+            <Settings size={16} />
+            Ders Seçimine Git
           </button>
         </div>
       </div>
@@ -61,7 +61,7 @@ export default function Dashboard({ onNavigateSettings }) {
     <div className="main-content">
       <div className="page-header">
         <h1>Dashboard</h1>
-        <p>{exams.length} sınav kayıtlı · {upcomingExams.length} yaklaşan sınav</p>
+        <p>{selectedCourses.length} ders takip ediliyor · {upcomingExams.length} yaklaşan sınav</p>
       </div>
 
       {/* Next Exam Hero Card */}
@@ -73,6 +73,9 @@ export default function Dashboard({ onNavigateSettings }) {
           </div>
           <div className="hero-course">{nextExam.course}</div>
           <div className="hero-meta">
+            <span className="hero-meta-item">
+              <Tag size={15} /> {nextExam.period}
+            </span>
             <span className="hero-meta-item">
               <Calendar size={15} /> {nextExam.dateStr}
             </span>
@@ -163,7 +166,7 @@ export default function Dashboard({ onNavigateSettings }) {
         <div className="empty-state">
           <Calendar />
           <h3>Tüm sınavlar tamamlandı! 🎉</h3>
-          <p>Tüm sınavlarınız geçmiş görünüyor.</p>
+          <p>Seçili derslerinizin tüm sınavları geçmiş görünüyor.</p>
         </div>
       )}
     </div>

@@ -89,7 +89,7 @@ export default function Calendar() {
                 {dayExams.length === 0 && <div className="weekly-no-exam">—</div>}
                 {dayExams.map((exam) => (
                   <div key={exam.id} className="weekly-exam-item selected">
-                    <div className="weekly-exam-name">{exam.course}</div>
+                    <div className="weekly-exam-name">{exam.course}{exam.period ? ` · ${exam.period}` : ''}</div>
                     {exam.timeStr && <div className="weekly-exam-meta"><Clock size={11} /><span>{exam.timeStr}</span></div>}
                     {exam.classroom && <div className="weekly-exam-meta"><MapPin size={11} /><span>{exam.classroom}</span></div>}
                   </div>

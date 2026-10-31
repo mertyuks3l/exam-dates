@@ -1,4 +1,4 @@
-const EXAMS_STORAGE_KEY = 'exam-dashboard-exams';
+const SELECTED_COURSES_STORAGE_KEY = 'exam-dashboard-selected-courses';
 
 /**
  * Calculate the difference in calendar days from today.
@@ -57,45 +57,53 @@ export function formatTimeStr(start, end) {
 }
 
 /**
- * Create an exam object from form data.
+ * Build exam objects from the static schedule entries (see src/data/examSchedule.js).
+ * `course` (code + name) is the key used for course selection, so a single
+ * selection covers the Vize, Final and Bütünleme exams of that course.
  */
-export function createExam({ course, date, timeStart, timeEnd, classroom, lecturer }) {
-  const dateObj = new Date(date);
-  dateObj.setHours(0, 0, 0, 0);
-  return {
-    id: crypto.randomUUID(),
-    course: course.trim(),
-    date: dateObj,
-    dateStr: formatDateStr(dateObj),
-    dayName: TURKISH_DAY_NAMES[dateObj.getDay()],
-    timeStart: timeStart || '',
-    timeEnd: timeEnd || '',
-    timeStr: formatTimeStr(timeStart, timeEnd),
-    classroom: classroom?.trim() || '',
-    lecturer: lecturer?.trim() || '',
-  };
+export function buildExams(schedule) {
+  return schedule
+    .map((entry) => {
+      const [y, m, d] = entry.date.split('-').map(Number);
+      const dateObj = new Date(y, m - 1, d);
+      const course = entry.code ? `${entry.code} ${entry.name}` : entry.name;
+      return {
+        id: `${entry.period}|${course}|${entry.date}|${entry.timeStart}`,
+        course,
+        code: entry.code,
+        name: entry.name,
+        group: entry.group,
+        period: entry.period,
+        date: dateObj,
+        dateStr: formatDateStr(dateObj),
+        dayName: TURKISH_DAY_NAMES[dateObj.getDay()],
+        timeStart: entry.timeStart || '',
+        timeEnd: entry.timeEnd || '',
+        timeStr: formatTimeStr(entry.timeStart, entry.timeEnd),
+        classroom: entry.classroom || '',
+        lecturer: entry.lecturer || '',
+        note: entry.note || '',
+      };
+    })
+    .sort((a, b) => a.date - b.date || a.timeStart.localeCompare(b.timeStart));
 }
 
 /**
- * Load exams from localStorage.
+ * Load the selected course names from localStorage.
  */
-export function loadExamsFromStorage() {
+export function loadSelectedCourses() {
   try {
-    const raw = localStorage.getItem(EXAMS_STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw);
-    return parsed.map((e) => ({
-      ...e,
-      date: new Date(e.date),
-    })).sort((a, b) => a.date - b.date);
+    const raw = localStorage.getItem(SELECTED_COURSES_STORAGE_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
   }
 }
 
 /**
- * Save exams to localStorage.
+ * Save the selected course names to localStorage.
  */
-export function saveExamsToStorage(exams) {
-  localStorage.setItem(EXAMS_STORAGE_KEY, JSON.stringify(exams));
+export function saveSelectedCourses(courses) {
+  localStorage.setItem(SELECTED_COURSES_STORAGE_KEY, JSON.stringify(courses));
 }

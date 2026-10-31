@@ -1,47 +1,50 @@
-import { createContext, useContext, useState, useCallback } from 'react';
-import { loadExamsFromStorage, saveExamsToStorage, createExam } from '../utils/examHelpers';
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import examSchedule from '../data/examSchedule';
+import { buildExams, loadSelectedCourses, saveSelectedCourses } from '../utils/examHelpers';
 
 const ExamContext = createContext(null);
 
-export function ExamProvider({ children }) {
-  const [exams, setExams] = useState(() => loadExamsFromStorage());
+const ALL_EXAMS = buildExams(examSchedule);
 
-  const persist = useCallback((updatedExams) => {
-    const sorted = [...updatedExams].sort((a, b) => a.date - b.date);
-    setExams(sorted);
-    saveExamsToStorage(sorted);
+export function ExamProvider({ children }) {
+  const [selectedCourses, setSelectedCourses] = useState(() => {
+    // Drop selections for courses that no longer exist in the schedule
+    const known = new Set(ALL_EXAMS.map((e) => e.course));
+    return loadSelectedCourses().filter((c) => known.has(c));
+  });
+
+  // Persist selections
+  useEffect(() => {
+    saveSelectedCourses(selectedCourses);
+  }, [selectedCourses]);
+
+  const toggleCourse = useCallback((course) => {
+    setSelectedCourses((prev) =>
+      prev.includes(course) ? prev.filter((c) => c !== course) : [...prev, course]
+    );
   }, []);
 
-  const addExam = useCallback((formData) => {
-    const newExam = createExam(formData);
-    persist([...exams, newExam]);
-    return newExam;
-  }, [exams, persist]);
+  const selectAll = useCallback(() => {
+    setSelectedCourses([...new Set(ALL_EXAMS.map((e) => e.course))]);
+  }, []);
 
-  const updateExam = useCallback((id, formData) => {
-    const updated = exams.map((e) => {
-      if (e.id !== id) return e;
-      return createExam({ ...formData, id });
-    });
-    // Preserve original id
-    const idx = updated.findIndex((e) => e.id !== id && exams.find((x) => x.id === id));
-    const finalExams = exams.map((e) => {
-      if (e.id !== id) return e;
-      const rebuilt = createExam(formData);
-      return { ...rebuilt, id };
-    });
-    persist(finalExams);
-  }, [exams, persist]);
+  const deselectAll = useCallback(() => {
+    setSelectedCourses([]);
+  }, []);
 
-  const deleteExam = useCallback((id) => {
-    persist(exams.filter((e) => e.id !== id));
-  }, [exams, persist]);
+  // Exams of the selected courses (all periods), sorted by date
+  const exams = useMemo(
+    () => ALL_EXAMS.filter((e) => selectedCourses.includes(e.course)),
+    [selectedCourses]
+  );
 
   const value = {
+    allExams: ALL_EXAMS,
     exams,
-    addExam,
-    updateExam,
-    deleteExam,
+    selectedCourses,
+    toggleCourse,
+    selectAll,
+    deselectAll,
   };
 
   return <ExamContext.Provider value={value}>{children}</ExamContext.Provider>;
