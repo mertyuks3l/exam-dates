@@ -1,4 +1,4 @@
-// Generated from the 2026-2027 Güz exam schedule spreadsheet (Vize / Final / Bütünleme).
+﻿// Generated from the 2026-2027 Güz exam schedule spreadsheet (Vize / Final / Bütünleme).
 // Dates are YYYY-MM-DD, times are HH:MM (local).
 const examSchedule = [
     {
@@ -674,7 +674,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "Ortak",
         "code":  "",
         "name":  "ÜSD",
@@ -686,7 +686,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "Ortak",
         "code":  "",
         "name":  "Yabancı Dil I",
@@ -698,7 +698,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "Ortak",
         "code":  "",
         "name":  "Professional English I",
@@ -710,7 +710,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "Ortak",
         "code":  "",
         "name":  "Türk Dili I",
@@ -722,7 +722,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "Ortak",
         "code":  "",
         "name":  "Atatürk İlkeleri ve İnkılap Tarihi I",
@@ -734,7 +734,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "1",
         "code":  "MTH 1305",
         "name":  "Mathematics I",
@@ -746,7 +746,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "1",
         "code":  "PHY 1307",
         "name":  "Physics I",
@@ -758,7 +758,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "1",
         "code":  "CSE 1143",
         "name":  "Introduction to Computer Engineering and Career Planning",
@@ -770,7 +770,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "1",
         "code":  "CSE 1133/1135",
         "name":  "Introduction to Programming",
@@ -782,7 +782,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "1",
         "code":  "CSE 1131",
         "name":  "Molecular Biology for Computer Scientists",
@@ -794,7 +794,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "2",
         "code":  "MTH 2303",
         "name":  "Differential Equations",
@@ -806,7 +806,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "2",
         "code":  "CSE 2101",
         "name":  "Electrical Circuits and Electronics",
@@ -818,7 +818,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "2",
         "code":  "CSE 2113/2115",
         "name":  "Formal Languages and Abstract Machines",
@@ -830,7 +830,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "2",
         "code":  "CSE 2105",
         "name":  "Data Structures",
@@ -842,7 +842,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3121/3239",
         "name":  "Numerical Analysis for Computer Engineers",
@@ -854,7 +854,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3271/3273",
         "name":  "Cognitive Architectures",
@@ -866,7 +866,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3105/3135/3137",
         "name":  "Object Oriented Analysis and Design",
@@ -878,7 +878,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3129/3131",
         "name":  "Computer Organization",
@@ -890,7 +890,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3139/3141",
         "name":  "Database Management Systems",
@@ -902,7 +902,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3243/3244",
         "name":  "Python Programming",
@@ -914,7 +914,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "CSE 3123",
         "name":  "Mathematical Methods in Artificial Intelligence",
@@ -926,7 +926,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "3",
         "code":  "MTH 1009/1011",
         "name":  "Technology Foresight and Technology Roadmapping",
@@ -938,7 +938,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "4",
         "code":  "CBU 4406",
         "name":  "Job Safety and Workers Health-II",
@@ -950,7 +950,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "4",
         "code":  "CSE 4123/4125",
         "name":  "Software Engineering",
@@ -962,7 +962,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "4",
         "code":  "CSE 3234/4213",
         "name":  "Game Programming",
@@ -974,7 +974,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "4",
         "code":  "CSE 3238/4217",
         "name":  "Software Testing",
@@ -986,7 +986,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "4",
         "code":  "CSE 3220/3265",
         "name":  "Machine Learning",
@@ -998,7 +998,7 @@ const examSchedule = [
         "note":  ""
     },
     {
-        "period":  "BÃ¼tÃ¼nleme",
+        "period": "Bütünleme",
         "group":  "4",
         "code":  "CSE 3205/3211",
         "name":  "Advanced Computer Networks",

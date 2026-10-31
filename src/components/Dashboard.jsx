@@ -5,6 +5,13 @@ import { daysFromNow, getExamStatus } from '../utils/examHelpers';
 import ExamCard from './ExamCard';
 import CalendarView from './Calendar';
 
+const PERIOD_ORDER = ['Vize', 'Final', 'Bütünleme'];
+const PERIOD_TITLES = {
+  Vize: 'Yaklaşan Vize Sınavları',
+  Final: 'Yaklaşan Final Sınavları',
+  Bütünleme: 'Yaklaşan Bütünleme Sınavları',
+};
+
 export default function Dashboard({ onNavigateSettings }) {
   const { exams, selectedCourses } = useExams();
   const [now, setNow] = useState(new Date());
@@ -20,6 +27,13 @@ export default function Dashboard({ onNavigateSettings }) {
   const todayExams = exams.filter((e) => daysFromNow(e.date) === 0);
   const futureExams = exams.filter((e) => daysFromNow(e.date) > 0);
   const nextExam = futureExams.length > 0 ? futureExams[0] : (todayExams.length > 0 ? todayExams[0] : null);
+
+  // Group future exams by period (Vize, Final, Bütünleme)
+  const futureExamsByPeriod = PERIOD_ORDER.map((period) => ({
+    period,
+    title: PERIOD_TITLES[period] || `Yaklaşan ${period} Sınavları`,
+    exams: futureExams.filter((e) => e.period === period),
+  })).filter((group) => group.exams.length > 0);
 
   // Countdown calculation for next exam (counts down to exam start time)
   function getCountdown(exam) {
@@ -143,23 +157,23 @@ export default function Dashboard({ onNavigateSettings }) {
       {/* Weekly Calendar */}
       <CalendarView />
 
-      {/* Upcoming Exams */}
-      {futureExams.length > 0 && (
-        <div>
+      {/* Upcoming Exams Separated by Period */}
+      {futureExamsByPeriod.map((group) => (
+        <div key={group.period} style={{ marginBottom: 'var(--space-2xl)' }}>
           <div className="section-header">
             <h2 className="section-title">
               <Calendar size={18} />
-              Yaklaşan Sınavlar
+              {group.title}
             </h2>
-            <span className="section-count">{futureExams.length}</span>
+            <span className="section-count">{group.exams.length}</span>
           </div>
           <div className="exam-grid">
-            {futureExams.map((exam, i) => (
+            {group.exams.map((exam, i) => (
               <ExamCard key={exam.id} exam={exam} style={{ animationDelay: `${i * 0.06}s` }} />
             ))}
           </div>
         </div>
-      )}
+      ))}
 
       {/* All selected exams passed */}
       {upcomingExams.length === 0 && (
