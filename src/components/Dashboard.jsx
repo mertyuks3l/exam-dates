@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Clock, MapPin, User, AlertCircle, Settings, CheckCircle2 } from 'lucide-react';
+import { Calendar, Clock, MapPin, User, AlertCircle, Settings, CheckCircle2, Download } from 'lucide-react';
 import { useExams } from '../context/ExamContext';
-import { daysFromNow } from '../utils/examHelpers';
+import { daysFromNow, exportExamsToICS } from '../utils/examHelpers';
 import ExamCard from './ExamCard';
 import CalendarView from './Calendar';
 
@@ -80,8 +80,20 @@ export default function Dashboard({ onNavigateSettings }) {
   return (
     <div className="main-content">
       <div className="page-header">
-        <h1>Genel Bakış</h1>
-        <p>{selectedCourses.length} ders takip ediliyor · {upcomingExams.length} yaklaşan sınav</p>
+        <div className="page-header-row">
+          <div>
+            <h1>Genel Bakış</h1>
+            <p>{selectedCourses.length} ders takip ediliyor · {upcomingExams.length} yaklaşan sınav</p>
+          </div>
+          <button
+            type="button"
+            className="ics-export-btn"
+            onClick={() => exportExamsToICS(exams)}
+          >
+            <Download size={15} />
+            Takvime Ekle (.ics)
+          </button>
+        </div>
       </div>
 
       {/* Next Exam Hero Card */}

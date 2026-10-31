@@ -107,3 +107,83 @@ export function loadSelectedCourses() {
 export function saveSelectedCourses(courses) {
   localStorage.setItem(SELECTED_COURSES_STORAGE_KEY, JSON.stringify(courses));
 }
+
+/**
+ * Export given exams to an RFC 5545 .ics calendar file and trigger download.
+ */
+export function exportExamsToICS(exams) {
+  if (!exams || exams.length === 0) return;
+
+  const pad = (n) => String(n).padStart(2, '0');
+  const formatICSDateTime = (dateObj, hhmm) => {
+    const y = dateObj.getFullYear();
+    const m = pad(dateObj.getMonth() + 1);
+    const d = pad(dateObj.getDate());
+    const [hh, mm] = (hhmm || '09:00').split(':').map(Number);
+    return `${y}${m}${d}T${pad(hh)}${pad(mm)}00`;
+  };
+
+  const escapeICS = (str) =>
+    (str || '')
+      .replace(/\\/g, '\\\\')
+      .replace(/;/g, '\\;')
+      .replace(/,/g, '\\,')
+      .replace(/\r?\n/g, '\\n');
+
+  const stamp = formatICSDateTime(new Date(), '00:00') + 'Z';
+  const lines = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Sinav Takvimi//2026-2027 Guz//TR',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'X-WR-CALNAME:2026-27 Güz Sınav Takvimi',
+  ];
+
+  for (const exam of exams) {
+    const startTime = exam.timeStart || '09:00';
+    let endTime = exam.timeEnd;
+    if (!endTime) {
+      const [h, m] = startTime.split(':').map(Number);
+      endTime = `${pad(Math.min(23, h + 1))}:${pad(m || 0)}`;
+    }
+
+    const dtStart = formatICSDateTime(exam.date, startTime);
+    const dtEnd = formatICSDateTime(exam.date, endTime);
+    const summary = `[${exam.period}] ${exam.course}`;
+    const descParts = [];
+    if (exam.period) descParts.push(`Sınav Dönemi: ${exam.period}`);
+    if (exam.lecturer) descParts.push(`Öğretim Üyesi: ${exam.lecturer}`);
+    if (exam.classroom) descParts.push(`Derslik: ${exam.classroom}`);
+    if (exam.note) descParts.push(`Not: ${exam.note}`);
+
+    lines.push(
+      'BEGIN:VEVENT',
+      `UID:${escapeICS(exam.id)}@exam-dates`,
+      `DTSTAMP:${stamp}`,
+      `DTSTART:${dtStart}`,
+      `DTEND:${dtEnd}`,
+      `SUMMARY:${escapeICS(summary)}`,
+      ...(exam.classroom ? [`LOCATION:${escapeICS(exam.classroom)}`] : []),
+      ...(descParts.length > 0 ? [`DESCRIPTION:${escapeICS(descParts.join('\n'))}`] : []),
+      'BEGIN:VALARM',
+      'TRIGGER:-PT1H',
+      'ACTION:DISPLAY',
+      `DESCRIPTION:${escapeICS(summary)} 1 saat sonra başlayacak`,
+      'END:VALARM',
+      'END:VEVENT'
+    );
+  }
+
+  lines.push('END:VCALENDAR');
+
+  const blob = new Blob([lines.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = '2026-27-guz-sinav-takvimi.ics';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}

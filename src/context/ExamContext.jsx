@@ -24,6 +24,17 @@ export function ExamProvider({ children }) {
     );
   }, []);
 
+  const toggleGroup = useCallback((groupCourses) => {
+    setSelectedCourses((prev) => {
+      const allSelected = groupCourses.every((c) => prev.includes(c));
+      if (allSelected) {
+        return prev.filter((c) => !groupCourses.includes(c));
+      }
+      const next = new Set([...prev, ...groupCourses]);
+      return [...next];
+    });
+  }, []);
+
   const selectAll = useCallback(() => {
     setSelectedCourses([...new Set(ALL_EXAMS.map((e) => e.course))]);
   }, []);
@@ -43,6 +54,7 @@ export function ExamProvider({ children }) {
     exams,
     selectedCourses,
     toggleCourse,
+    toggleGroup,
     selectAll,
     deselectAll,
   };

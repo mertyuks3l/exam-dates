@@ -1,6 +1,7 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Clock, MapPin } from 'lucide-react';
 import { useExams } from '../context/ExamContext';
+import { daysFromNow } from '../utils/examHelpers';
 
 const TURKISH_MONTHS = [
   'Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran',
@@ -39,8 +40,49 @@ export default function Calendar() {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayKey = dateKey(today);
+  const todayMonday = getMonday(today);
 
-  const [weekStart, setWeekStart] = useState(() => getMonday(today));
+  // Default to the week of the next upcoming exam (or today if none)
+  const initialMonday = useMemo(() => {
+    const upcoming = exams.find((e) => daysFromNow(e.date) >= 0);
+    return upcoming ? getMonday(upcoming.date) : getMonday(new Date());
+  }, [exams]);
+
+  const [weekStart, setWeekStart] = useState(() => initialMonday);
+
+  // Keep calendar synced to next exam week if the user changes course selection
+  // and current week has no exams
+  useEffect(() => {
+    setWeekStart(initialMonday);
+  }, [initialMonday]);
+
+  // Distinct exam weeks for quick jumping (e.g. Vize 1, Vize 2, Final 1, Final 2, Bütünleme)
+  const examWeeks = useMemo(() => {
+    const byPeriod = new Map();
+    for (const exam of exams) {
+      const monday = getMonday(exam.date);
+      const k = dateKey(monday);
+      const p = exam.period || 'Sınav';
+      if (!byPeriod.has(p)) byPeriod.set(p, new Map());
+      const pMap = byPeriod.get(p);
+      if (!pMap.has(k)) {
+        pMap.set(k, { key: k, monday, period: p, count: 0 });
+      }
+      pMap.get(k).count += 1;
+    }
+
+    const pills = [];
+    for (const [period, pMap] of byPeriod.entries()) {
+      const weeks = [...pMap.values()].sort((a, b) => a.monday - b.monday);
+      weeks.forEach((w, idx) => {
+        pills.push({
+          ...w,
+          label: weeks.length > 1 ? `${period} ${idx + 1}. Hafta` : period,
+        });
+      });
+    }
+    return pills;
+  }, [exams]);
 
   const weekDays = useMemo(() => {
     return Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
@@ -58,7 +100,10 @@ export default function Calendar() {
 
   const prevWeek = () => setWeekStart(addDays(weekStart, -7));
   const nextWeek = () => setWeekStart(addDays(weekStart, 7));
-  const goToday = () => setWeekStart(getMonday(today));
+  const goToday = () => setWeekStart(todayMonday);
+
+  const currentWeekKey = dateKey(weekStart);
+  const isCurrentWeekToday = currentWeekKey === dateKey(todayMonday);
 
   const weekEnd = addDays(weekStart, 6);
   const rangeLabel = weekStart.getMonth() === weekEnd.getMonth()
@@ -70,12 +115,34 @@ export default function Calendar() {
       <div className="weekly-nav">
         <div className="weekly-nav-left">
           <h3 className="weekly-range">{rangeLabel}</h3>
+          {examWeeks.length > 0 && (
+            <div className="weekly-jump-pills">
+              {examWeeks.map((w) => {
+                const isActive = currentWeekKey === w.key;
+                return (
+                  <button
+                    key={`${w.period}-${w.key}`}
+                    type="button"
+                    className={`weekly-jump-pill ${PERIOD_CLASS[w.period] || ''} ${isActive ? 'active' : ''}`}
+                    onClick={() => setWeekStart(w.monday)}
+                  >
+                    {w.label}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
         <div className="weekly-nav-controls">
           <button className="calendar-nav" onClick={prevWeek} aria-label="Önceki hafta">
             <ChevronLeft size={16} />
           </button>
-          <button className="weekly-today-btn" onClick={goToday}>Bugün</button>
+          <button
+            className={`weekly-today-btn ${isCurrentWeekToday ? 'active' : ''}`}
+            onClick={goToday}
+          >
+            Bugün
+          </button>
           <button className="calendar-nav" onClick={nextWeek} aria-label="Sonraki hafta">
             <ChevronRight size={16} />
           </button>
