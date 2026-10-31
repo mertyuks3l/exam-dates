@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Rounded Squircle Background -->
+  <rect width="64" height="64" rx="15" fill="#111827"/>
+  
+  <!-- Calendar Card Body -->
+  <rect x="10" y="13" width="44" height="41" rx="8" fill="#FFFFFF"/>
+  
+  <!-- Calendar Top Header Bar (Nordic Cobalt) -->
+  <path d="M10 21C10 16.5817 13.5817 13 18 13H46C50.4183 13 54 16.5817 54 21V25H10V21Z" fill="#2563EB"/>
+  
+  <!-- Calendar Binding Rings -->
+  <rect x="20" y="9" width="4" height="8" rx="2" fill="#E2E5EA"/>
+  <rect x="40" y="9" width="4" height="8" rx="2" fill="#E2E5EA"/>
+  
+  <!-- Period Event Bars (Vize Blue, Final Violet, Bütünleme Amber) -->
+  <rect x="16" y="31" width="18" height="4" rx="2" fill="#3B82F6"/>
+  <circle cx="44" cy="33" r="2.5" fill="#3B82F6"/>
+
+  <rect x="16" y="39" width="22" height="4" rx="2" fill="#8B5CF6"/>
+  <circle cx="44" cy="41" r="2.5" fill="#8B5CF6"/>
+
+  <rect x="16" y="47" width="14" height="4" rx="2" fill="#F59E0B"/>
+  <circle cx="44" cy="49" r="2.5" fill="#F59E0B"/>
+</svg>
