@@ -7,12 +7,23 @@
   <meta name="description"
     content="Personal Exam Dashboard — Track your upcoming midterm exams with countdowns and schedules." />
   <title>2026-27 Güz Sınav Takvimi</title>
+  <script>
+    (function () {
+      try {
+        var saved = localStorage.getItem('exam-dashboard-theme');
+        var theme = (saved === 'dark' || saved === 'light')
+          ? saved
+          : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      } catch (e) {}
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
     rel="stylesheet">
-  <script type="module" crossorigin src="/exam-dates/assets/index-C6TPu6BM.js"></script>
-  <link rel="stylesheet" crossorigin href="/exam-dates/assets/index-Dz-MlYSp.css">
+  <script type="module" crossorigin src="/exam-dates/assets/index-DF4RllZr.js"></script>
+  <link rel="stylesheet" crossorigin href="/exam-dates/assets/index-CgvAKDP5.css">
 </head>
 
 <body>

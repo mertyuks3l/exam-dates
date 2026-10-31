@@ -1,11 +1,18 @@
-/* ===== SOFT NORDIC / APPLE CALENDAR DESIGN SYSTEM ===== */
+/* ===== SOFT NORDIC / APPLE CALENDAR DESIGN SYSTEM (LIGHT & DARK) ===== */
 :root {
+  color-scheme: light;
+
   /* Surfaces */
   --bg-canvas: #F5F6F8;
   --bg-surface: #FFFFFF;
   --bg-surface-subtle: #F9FAFB;
   --bg-surface-muted: #F1F3F6;
   --bg-surface-hover: #FCFDFE;
+  --bg-navbar: rgba(255, 255, 255, 0.88);
+  --bg-selected-row: #F5F8FF;
+  --bg-calendar-today: #FAFBFD;
+  --bg-calendar-past: #FAFAFB;
+  --toggle-track: #D1D5DB;
 
   /* Borders */
   --border-subtle: #EAECEF;
@@ -17,6 +24,13 @@
   --text-secondary: #4B5563;
   --text-muted: #6B7280;
   --text-faint: #9CA3AF;
+
+  /* Brand Icon & Buttons */
+  --brand-icon-bg: #111827;
+  --brand-icon-fg: #FFFFFF;
+  --btn-primary-bg: #111827;
+  --btn-primary-fg: #FFFFFF;
+  --btn-primary-hover: #1F2937;
 
   /* Brand Accent (Nordic Cobalt) */
   --accent: #2563EB;
@@ -44,6 +58,9 @@
   --status-today-bg: #FEF2F2;
   --status-today-text: #DC2626;
   --status-today-border: #FECACA;
+  --status-today-icon-bg: #FEE2E2;
+  --status-today-heading: #991B1B;
+  --status-today-sub: #B91C1C;
 
   --status-soon-bg: #FFFBEB;
   --status-soon-text: #D97706;
@@ -83,6 +100,88 @@
   --transition-base: 220ms cubic-bezier(0.2, 0, 0, 1);
 }
 
+/* ===== DARK THEME (MATTE NORDIC / NOTION CALENDAR DARK) ===== */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg-canvas: #0E1015;
+  --bg-surface: #161920;
+  --bg-surface-subtle: #1B1F27;
+  --bg-surface-muted: #212631;
+  --bg-surface-hover: #1E222B;
+  --bg-navbar: rgba(22, 25, 32, 0.88);
+  --bg-selected-row: rgba(59, 130, 246, 0.08);
+  --bg-calendar-today: #1A1F2B;
+  --bg-calendar-past: #13161C;
+  --toggle-track: #343B4A;
+
+  /* Borders */
+  --border-subtle: #202530;
+  --border-default: #272D3A;
+  --border-strong: #373F51;
+
+  /* Typography */
+  --text-primary: #F3F4F6;
+  --text-secondary: #9CA3AF;
+  --text-muted: #6B7280;
+  --text-faint: #4B5563;
+
+  /* Brand Icon & Buttons */
+  --brand-icon-bg: #2563EB;
+  --brand-icon-fg: #FFFFFF;
+  --btn-primary-bg: #2563EB;
+  --btn-primary-fg: #FFFFFF;
+  --btn-primary-hover: #3B82F6;
+
+  /* Brand Accent */
+  --accent: #3B82F6;
+  --accent-hover: #60A5FA;
+  --accent-soft: rgba(59, 130, 246, 0.14);
+  --accent-border: rgba(59, 130, 246, 0.3);
+
+  /* Period Tints */
+  --vize-bg: rgba(59, 130, 246, 0.14);
+  --vize-text: #60A5FA;
+  --vize-border: rgba(59, 130, 246, 0.28);
+  --vize-bar: #3B82F6;
+
+  --final-bg: rgba(139, 92, 246, 0.14);
+  --final-text: #A78BFA;
+  --final-border: rgba(139, 92, 246, 0.28);
+  --final-bar: #8B5CF6;
+
+  --butunleme-bg: rgba(245, 158, 11, 0.14);
+  --butunleme-text: #FBBF24;
+  --butunleme-border: rgba(245, 158, 11, 0.28);
+  --butunleme-bar: #F59E0B;
+
+  /* Status Colors */
+  --status-today-bg: rgba(239, 68, 68, 0.14);
+  --status-today-text: #F87171;
+  --status-today-border: rgba(239, 68, 68, 0.28);
+  --status-today-icon-bg: rgba(239, 68, 68, 0.2);
+  --status-today-heading: #FCA5A5;
+  --status-today-sub: #F87171;
+
+  --status-soon-bg: rgba(245, 158, 11, 0.14);
+  --status-soon-text: #FBBF24;
+  --status-soon-border: rgba(245, 158, 11, 0.28);
+
+  --status-upcoming-bg: #212631;
+  --status-upcoming-text: #D1D5DB;
+  --status-upcoming-border: #2B3240;
+
+  --status-past-bg: #181B22;
+  --status-past-text: #6B7280;
+  --status-past-border: #202530;
+
+  /* Elevation */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
+
 /* ===== RESET ===== */
 *,
 *::before,
@@ -105,6 +204,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   line-height: 1.5;
+  transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 #root {
@@ -118,11 +218,12 @@ body {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.88);
+  background: var(--bg-navbar);
   backdrop-filter: saturate(180%) blur(16px);
   -webkit-backdrop-filter: saturate(180%) blur(16px);
   border-bottom: 1px solid var(--border-default);
   padding: 0 var(--space-xl);
+  transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .navbar-inner {
@@ -144,11 +245,11 @@ body {
   width: 32px;
   height: 32px;
   border-radius: var(--radius-sm);
-  background: var(--text-primary);
+  background: var(--brand-icon-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #FFFFFF;
+  color: var(--brand-icon-fg);
   box-shadow: var(--shadow-xs);
 }
 
@@ -172,6 +273,12 @@ body {
   background: var(--bg-surface-muted);
   padding: 2px 8px;
   border-radius: var(--radius-full);
+}
+
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Segmented Control Tabs */
@@ -208,7 +315,29 @@ body {
   color: var(--text-primary);
   background: var(--bg-surface);
   font-weight: 600;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.08);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Theme Switcher Button */
+.theme-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-xs);
+}
+
+.theme-toggle-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-surface-subtle);
+  border-color: var(--border-strong);
 }
 
 /* ===== MAIN LAYOUT ===== */
@@ -670,11 +799,11 @@ body {
 }
 
 .weekly-day.today {
-  background: #FAFBFD;
+  background: var(--bg-calendar-today);
 }
 
 .weekly-day.past {
-  background: #FAFAFB;
+  background: var(--bg-calendar-past);
 }
 
 .weekly-day.past .weekly-day-exams {
@@ -817,7 +946,7 @@ body {
 
 .settings-search input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.16);
 }
 
 .select-bar {
@@ -895,7 +1024,7 @@ body {
 }
 
 .course-item.selected {
-  background: #F8FAFF;
+  background: var(--bg-selected-row);
 }
 
 .course-info {
@@ -986,7 +1115,7 @@ body {
 .toggle-slider {
   position: absolute;
   inset: 0;
-  background: #D1D5DB;
+  background: var(--toggle-track);
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: background var(--transition-fast);
@@ -1001,7 +1130,7 @@ body {
   bottom: 2px;
   background: #FFFFFF;
   border-radius: 50%;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
   transition: transform var(--transition-fast);
 }
 
@@ -1033,7 +1162,7 @@ body {
   width: 36px;
   height: 36px;
   border-radius: var(--radius-sm);
-  background: #FEE2E2;
+  background: var(--status-today-icon-bg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1044,12 +1173,12 @@ body {
 .today-banner-text h3 {
   font-size: 0.9rem;
   font-weight: 600;
-  color: #991B1B;
+  color: var(--status-today-heading);
 }
 
 .today-banner-text p {
   font-size: 0.8rem;
-  color: #B91C1C;
+  color: var(--status-today-sub);
 }
 
 /* ===== EMPTY STATE ===== */
@@ -1063,7 +1192,7 @@ body {
   box-shadow: var(--shadow-xs);
 }
 
-.empty-state svg {
+.empty-state > svg {
   width: 40px;
   height: 40px;
   margin-bottom: 12px;
@@ -1090,8 +1219,8 @@ body {
   align-items: center;
   gap: 6px;
   margin-top: 18px;
-  background: var(--text-primary);
-  color: #FFFFFF;
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
   font-family: inherit;
   font-size: 0.825rem;
   font-weight: 500;
@@ -1104,7 +1233,7 @@ body {
 }
 
 .empty-state .go-settings-btn:hover {
-  background: #1F2937;
+  background: var(--btn-primary-hover);
 }
 
 /* ===== RESPONSIVE ===== */
